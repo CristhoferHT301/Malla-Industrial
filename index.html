@@ -1,197 +1,141 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Malla Curricular Interactiva</title>
+  <meta charset="UTF-8" />
+  <title>Malla Curricular - Ingeniería Industrial</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f5f7fa;
-      margin: 0;
-      padding: 1rem;
-      color: #333;
+      font-family: sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
     }
     h1 {
       text-align: center;
-      margin-bottom: 1rem;
-    }
-    .nivel {
-      margin-bottom: 2rem;
-    }
-    .nivel h2 {
-      background-color: #a0c4ff;
-      padding: 0.5rem;
-      border-radius: 8px;
-      color: #003566;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 10px;
+      margin-top: 30px;
     }
     .curso {
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      padding: 1rem;
       background-color: #fff;
-      position: relative;
-      transition: background-color 0.3s;
+      border: 2px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
       cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      position: relative;
+    }
+    .curso.aprobado {
+      background-color: #a0e7a0;
+      border-color: #4caf50;
     }
     .curso.bloqueado {
       background-color: #eee;
-      color: #aaa;
+      color: #999;
       cursor: not-allowed;
     }
-    .curso.aprobado {
-      background-color: #d0f4de;
-      border-color: #63c48f;
-    }
     .tooltip {
-      visibility: hidden;
-      background-color: #222;
-      color: #fff;
-      padding: 0.5rem;
-      border-radius: 4px;
       position: absolute;
-      bottom: 100%;
+      bottom: -20px;
       left: 50%;
       transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      white-space: pre-wrap;
-      z-index: 1;
+      background-color: #333;
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 5px;
+      white-space: nowrap;
+      display: none;
+      z-index: 10;
     }
-    .curso:hover .tooltip {
-      visibility: visible;
-      opacity: 1;
+    .curso.bloqueado:hover .tooltip {
+      display: block;
+    }
+    .ciclo-label {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <h1>Malla Curricular - Ingeniería Industrial</h1>
-  <div id="contenedor"></div>
+  <div class="grid" id="malla"></div>
 
   <script>
     const cursos = [
-      { nivel: 1, codigo: "CC1101", nombre: "Cálculo de una variable", requisitos: [] },
-      { nivel: 1, codigo: "CC1141", nombre: "Química General", requisitos: [] },
-      { nivel: 1, codigo: "CC1142", nombre: "Laboratorio de Química General", requisitos: [] },
-      { nivel: 1, codigo: "CS1111", nombre: "Programación I", requisitos: [] },
-      { nivel: 1, codigo: "HH1101", nombre: "Laboratorio de Comunicación 1", requisitos: [] },
-      { nivel: 1, codigo: "IN1001", nombre: "Introducción a la Ingeniería Industrial", requisitos: [] },
-      { nivel: 1, codigo: "PI1101", nombre: "Proyectos Interdisciplinarios 1", requisitos: [] },
-      
-      { nivel: 2, codigo: "CC1104", nombre: "Cálculo Vectorial", requisitos: ["CC1101"] },
-      { nivel: 2, codigo: "CC1105", nombre: "Estadística y Probabilidades I", requisitos: ["CC1101", "CS1111"] },
-      { nivel: 2, codigo: "CC1121", nombre: "Introducción a la Mecánica", requisitos: ["CC1101"] },
-      { nivel: 2, codigo: "CC1143", nombre: "Ciencia de los Materiales", requisitos: ["CC1141"] },
-      { nivel: 2, codigo: "HH1102", nombre: "Laboratorio de Comunicación 2", requisitos: ["HH1101"] },
-      { nivel: 2, codigo: "HH2101", nombre: "Perú: Temas de la sociedad contemporánea", requisitos: [] },
-
-      { nivel: 3, codigo: "CC1103", nombre: "Álgebra Lineal", requisitos: ["CC1101"] },
-      { nivel: 3, codigo: "CC2101", nombre: "Ecuaciones Diferenciales", requisitos: ["CC1104"] },
-      { nivel: 3, codigo: "CS1112", nombre: "Programación II", requisitos: ["CS1111"] },
-      { nivel: 3, codigo: "GI2101", nombre: "Empresa y Consumidor", requisitos: [] },
-      { nivel: 3, codigo: "IN2005", nombre: "Estadística Aplicada", requisitos: ["CC1104", "CC1105"] },
-      { nivel: 3, codigo: "IN2006", nombre: "Fundamentos de Operaciones", requisitos: ["CC1105"] },
-
-      { nivel: 4, codigo: "CC1122", nombre: "Fundamentos de Electricidad y Magnetismo", requisitos: ["CC1101"] },
-      { nivel: 4, codigo: "CC2104", nombre: "Métodos Numéricos", requisitos: ["CC1103", "CC2101", "CS1111"] },
-      { nivel: 4, codigo: "HH2102", nombre: "Economía, Gobernanza y Relaciones de Poder", requisitos: [] },
-      { nivel: 4, codigo: "IN2003", nombre: "Investigación de Operaciones I", requisitos: ["CC1103", "CS1112"] },
-      { nivel: 4, codigo: "IN2004", nombre: "Gestión de Costos", requisitos: ["CC1105"] },
-      { nivel: 4, codigo: "PI2102", nombre: "Proyectos Interdisciplinarios 2", requisitos: ["PI1101"] },
-
-      { nivel: 5, codigo: "GI3101", nombre: "Finanzas Empresariales", requisitos: ["GI2101"] },
-      { nivel: 5, codigo: "IN3003", nombre: "Diseño de Productos y Servicios", requisitos: ["IN2004", "IN2006"] },
-      { nivel: 5, codigo: "IN3004", nombre: "Salud y Seguridad Ocupacional", requisitos: [] },
-      { nivel: 5, codigo: "IN3005", nombre: "Ingeniería Financiera", requisitos: ["CC1105"] },
-      { nivel: 5, codigo: "IN3011", nombre: "Investigación de Operaciones II", requisitos: ["IN2005"] },
-      { nivel: 5, codigo: "IN3012", nombre: "Planificación y Control de Operaciones", requisitos: ["IN2003", "IN2004"] },
-
-      { nivel: 6, codigo: "IN3006", nombre: "Gestión de la Calidad", requisitos: ["CC1105"] },
-      { nivel: 6, codigo: "IN3007", nombre: "Simulación de Operaciones", requisitos: ["IN3011"] },
-      { nivel: 6, codigo: "IN3008", nombre: "Gestión de la Cadena de Suministros", requisitos: ["IN2005", "IN3012"] },
-      { nivel: 6, codigo: "IN3009", nombre: "Análisis y Diseño de Sistemas", requisitos: ["CS1112", "IN2006"] },
-      { nivel: 6, codigo: "IN3010", nombre: "Sistemas de Información para Operaciones", requisitos: ["IN3012"] },
-
-      { nivel: 7, codigo: "ELECTIVO1", nombre: "Electivo 1", requisitos: [] },
-      { nivel: 7, codigo: "HH3101", nombre: "Arte y Tecnología", requisitos: [] },
-      { nivel: 7, codigo: "IN4007", nombre: "Lean Six Sigma", requisitos: ["IN2005", "IN3006"] },
-      { nivel: 7, codigo: "IN4008", nombre: "Data Analytics", requisitos: ["CC1103", "CS1112", "IN2005"] },
-      { nivel: 7, codigo: "IN4009", nombre: "Gestión de Proyectos de Ingeniería", requisitos: ["IN2004"] },
-      { nivel: 7, codigo: "PI3103", nombre: "Proyectos Interdisciplinarios 3", requisitos: ["PI2102"] },
-
-      { nivel: 8, codigo: "ELECTIVO2", nombre: "Electivo 2", requisitos: [] },
-      { nivel: 8, codigo: "GI4101", nombre: "Evaluación Financiera de Proyectos", requisitos: ["GI3101"] },
-      { nivel: 8, codigo: "PR4101", nombre: "Proyecto Preprofesional", requisitos: [] },
-
-      { nivel: 9, codigo: "ELECTIVO3", nombre: "Electivo 3", requisitos: [] },
-      { nivel: 9, codigo: "ELECTIVO4", nombre: "Electivo 4", requisitos: [] },
-      { nivel: 9, codigo: "GI5101", nombre: "Estrategia y Organizaciones", requisitos: ["GI4101"] },
-      { nivel: 9, codigo: "HH5101", nombre: "Ética y Tecnología", requisitos: [] },
-      { nivel: 9, codigo: "IN5007", nombre: "Ciencia de la Decisión y Dinámica de Sistemas", requisitos: ["IN3011"] },
-      { nivel: 9, codigo: "IN5107", nombre: "Proyecto Final de Ingeniería Industrial I", requisitos: [] },
-
-      { nivel: 10, codigo: "ELECTIVO5", nombre: "Electivo 5", requisitos: [] },
-      { nivel: 10, codigo: "ELECTIVO6", nombre: "Electivo 6", requisitos: [] },
-      { nivel: 10, codigo: "IN5008", nombre: "Comportamiento Organizacional", requisitos: ["IN3012"] },
-      { nivel: 10, codigo: "IN5009", nombre: "Estrategia de Operaciones", requisitos: ["IN3008"] },
-      { nivel: 10, codigo: "IN5011", nombre: "Proyecto Final de Ingeniería Industrial II", requisitos: ["IN5107"] }
+      { id: 'MA100', nombre: 'Matemática I', ciclo: 1 },
+      { id: 'FI100', nombre: 'Física I', ciclo: 1 },
+      { id: 'CS100', nombre: 'Introducción a la Computación', ciclo: 1 },
+      { id: 'MA101', nombre: 'Matemática II', ciclo: 2, prereq: ['MA100'] },
+      { id: 'FI101', nombre: 'Física II', ciclo: 2, prereq: ['FI100'] },
+      { id: 'IN200', nombre: 'Estadística I', ciclo: 3, prereq: ['MA101'] },
+      { id: 'MA200', nombre: 'Matemática III', ciclo: 3, prereq: ['MA101'] },
+      { id: 'OP300', nombre: 'Investigación de Operaciones I', ciclo: 4, prereq: ['MA200'] },
+      { id: 'IN300', nombre: 'Estadística II', ciclo: 4, prereq: ['IN200'] },
+      { id: 'OP400', nombre: 'Investigación de Operaciones II', ciclo: 5, prereq: ['OP300'] },
+      { id: 'IN400', nombre: 'Simulación', ciclo: 5, prereq: ['IN300'] },
+      { id: 'AD500', nombre: 'Gestión de Operaciones', ciclo: 6, prereq: ['OP400'] },
+      { id: 'IN500', nombre: 'Gestión de Calidad', ciclo: 6, prereq: ['IN400'] },
+      { id: 'PR600', nombre: 'Proyecto de Ingeniería I', ciclo: 7, prereq: ['AD500', 'IN500'] },
+      { id: 'IN600', nombre: 'Logística', ciclo: 7 },
+      { id: 'PR700', nombre: 'Proyecto de Ingeniería II', ciclo: 8, prereq: ['PR600'] },
+      { id: 'TR800', nombre: 'Trabajo de Tesis I', ciclo: 9, prereq: ['PR700'] },
+      { id: 'TR900', nombre: 'Trabajo de Tesis II', ciclo: 10, prereq: ['TR800'] }
     ];
 
-    const estadoCursos = JSON.parse(localStorage.getItem('estadoCursos') || '{}');
-
-    function crearCurso(curso) {
-      const div = document.createElement('div');
-      div.className = 'curso';
-      div.textContent = `${curso.codigo}: ${curso.nombre}`;
-      div.dataset.codigo = curso.codigo;
-
-      const tooltip = document.createElement('div');
-      tooltip.className = 'tooltip';
-      div.appendChild(tooltip);
-
-      function actualizarEstado() {
-        const faltan = curso.requisitos.filter(r => !estadoCursos[r]);
-        div.classList.remove('aprobado', 'bloqueado');
-        if (estadoCursos[curso.codigo]) {
-          div.classList.add('aprobado');
-        } else if (faltan.length) {
-          div.classList.add('bloqueado');
-          tooltip.textContent = 'Requiere:\n' + faltan.join('\n');
-        } else {
-          tooltip.textContent = '';
-        }
-      }
-
-      div.addEventListener('click', () => {
-        if (div.classList.contains('bloqueado')) return;
-        estadoCursos[curso.codigo] = !estadoCursos[curso.codigo];
-        localStorage.setItem('estadoCursos', JSON.stringify(estadoCursos));
-        render();
-      });
-
-      actualizarEstado();
-      return div;
-    }
+    const malla = document.getElementById('malla');
+    const aprobados = new Set(JSON.parse(localStorage.getItem('aprobados')) || []);
 
     function render() {
-      const contenedor = document.getElementById('contenedor');
-      contenedor.innerHTML = '';
-      const niveles = [...new Set(cursos.map(c => c.nivel))].sort((a, b) => a - b);
-      for (const nivel of niveles) {
-        const divNivel = document.createElement('div');
-        divNivel.className = 'nivel';
-        divNivel.innerHTML = `<h2>Ciclo ${nivel}</h2>`;
-        const grid = document.createElement('div');
-        grid.className = 'grid';
-        for (const curso of cursos.filter(c => c.nivel === nivel)) {
-          grid.appendChild(crearCurso(curso));
+      malla.innerHTML = '';
+
+      for (let ciclo = 1; ciclo <= 10; ciclo++) {
+        const cursosCiclo = cursos.filter(c => c.ciclo === ciclo);
+
+        cursosCiclo.forEach(curso => {
+          const div = document.createElement('div');
+          div.className = 'curso';
+          div.dataset.id = curso.id;
+
+          const faltan = (curso.prereq || []).filter(p => !aprobados.has(p));
+
+          if (faltan.length) {
+            div.classList.add('bloqueado');
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = 'Falta: ' + faltan.join(', ');
+            div.appendChild(tooltip);
+          } else {
+            div.addEventListener('click', () => {
+              if (aprobados.has(curso.id)) {
+                aprobados.delete(curso.id);
+              } else {
+                aprobados.add(curso.id);
+              }
+              localStorage.setItem('aprobados', JSON.stringify([...aprobados]));
+              render();
+            });
+          }
+
+          if (aprobados.has(curso.id)) {
+            div.classList.add('aprobado');
+          }
+
+          div.innerHTML += `<strong>${curso.id}</strong><br>${curso.nombre}`;
+          malla.appendChild(div);
+        });
+
+        // Relleno de columnas vacías
+        const faltan = 1 - cursosCiclo.length;
+        for (let i = 0; i < faltan; i++) {
+          const filler = document.createElement('div');
+          malla.appendChild(filler);
         }
-        divNivel.appendChild(grid);
-        contenedor.appendChild(divNivel);
       }
     }
 
@@ -199,4 +143,5 @@
   </script>
 </body>
 </html>
+
 
