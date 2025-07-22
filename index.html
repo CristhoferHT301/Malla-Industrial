@@ -81,19 +81,64 @@
       { nivel: 1, codigo: "HH1101", nombre: "Laboratorio de Comunicación 1", requisitos: [] },
       { nivel: 1, codigo: "IN1001", nombre: "Introducción a la Ingeniería Industrial", requisitos: [] },
       { nivel: 1, codigo: "PI1101", nombre: "Proyectos Interdisciplinarios 1", requisitos: [] },
+      
       { nivel: 2, codigo: "CC1104", nombre: "Cálculo Vectorial", requisitos: ["CC1101"] },
       { nivel: 2, codigo: "CC1105", nombre: "Estadística y Probabilidades I", requisitos: ["CC1101", "CS1111"] },
       { nivel: 2, codigo: "CC1121", nombre: "Introducción a la Mecánica", requisitos: ["CC1101"] },
       { nivel: 2, codigo: "CC1143", nombre: "Ciencia de los Materiales", requisitos: ["CC1141"] },
       { nivel: 2, codigo: "HH1102", nombre: "Laboratorio de Comunicación 2", requisitos: ["HH1101"] },
       { nivel: 2, codigo: "HH2101", nombre: "Perú: Temas de la sociedad contemporánea", requisitos: [] },
+
       { nivel: 3, codigo: "CC1103", nombre: "Álgebra Lineal", requisitos: ["CC1101"] },
       { nivel: 3, codigo: "CC2101", nombre: "Ecuaciones Diferenciales", requisitos: ["CC1104"] },
       { nivel: 3, codigo: "CS1112", nombre: "Programación II", requisitos: ["CS1111"] },
       { nivel: 3, codigo: "GI2101", nombre: "Empresa y Consumidor", requisitos: [] },
       { nivel: 3, codigo: "IN2005", nombre: "Estadística Aplicada", requisitos: ["CC1104", "CC1105"] },
       { nivel: 3, codigo: "IN2006", nombre: "Fundamentos de Operaciones", requisitos: ["CC1105"] },
-      // Agrega más cursos aquí siguiendo el formato
+
+      { nivel: 4, codigo: "CC1122", nombre: "Fundamentos de Electricidad y Magnetismo", requisitos: ["CC1101"] },
+      { nivel: 4, codigo: "CC2104", nombre: "Métodos Numéricos", requisitos: ["CC1103", "CC2101", "CS1111"] },
+      { nivel: 4, codigo: "HH2102", nombre: "Economía, Gobernanza y Relaciones de Poder", requisitos: [] },
+      { nivel: 4, codigo: "IN2003", nombre: "Investigación de Operaciones I", requisitos: ["CC1103", "CS1112"] },
+      { nivel: 4, codigo: "IN2004", nombre: "Gestión de Costos", requisitos: ["CC1105"] },
+      { nivel: 4, codigo: "PI2102", nombre: "Proyectos Interdisciplinarios 2", requisitos: ["PI1101"] },
+
+      { nivel: 5, codigo: "GI3101", nombre: "Finanzas Empresariales", requisitos: ["GI2101"] },
+      { nivel: 5, codigo: "IN3003", nombre: "Diseño de Productos y Servicios", requisitos: ["IN2004", "IN2006"] },
+      { nivel: 5, codigo: "IN3004", nombre: "Salud y Seguridad Ocupacional", requisitos: [] },
+      { nivel: 5, codigo: "IN3005", nombre: "Ingeniería Financiera", requisitos: ["CC1105"] },
+      { nivel: 5, codigo: "IN3011", nombre: "Investigación de Operaciones II", requisitos: ["IN2005"] },
+      { nivel: 5, codigo: "IN3012", nombre: "Planificación y Control de Operaciones", requisitos: ["IN2003", "IN2004"] },
+
+      { nivel: 6, codigo: "IN3006", nombre: "Gestión de la Calidad", requisitos: ["CC1105"] },
+      { nivel: 6, codigo: "IN3007", nombre: "Simulación de Operaciones", requisitos: ["IN3011"] },
+      { nivel: 6, codigo: "IN3008", nombre: "Gestión de la Cadena de Suministros", requisitos: ["IN2005", "IN3012"] },
+      { nivel: 6, codigo: "IN3009", nombre: "Análisis y Diseño de Sistemas", requisitos: ["CS1112", "IN2006"] },
+      { nivel: 6, codigo: "IN3010", nombre: "Sistemas de Información para Operaciones", requisitos: ["IN3012"] },
+
+      { nivel: 7, codigo: "ELECTIVO1", nombre: "Electivo 1", requisitos: [] },
+      { nivel: 7, codigo: "HH3101", nombre: "Arte y Tecnología", requisitos: [] },
+      { nivel: 7, codigo: "IN4007", nombre: "Lean Six Sigma", requisitos: ["IN2005", "IN3006"] },
+      { nivel: 7, codigo: "IN4008", nombre: "Data Analytics", requisitos: ["CC1103", "CS1112", "IN2005"] },
+      { nivel: 7, codigo: "IN4009", nombre: "Gestión de Proyectos de Ingeniería", requisitos: ["IN2004"] },
+      { nivel: 7, codigo: "PI3103", nombre: "Proyectos Interdisciplinarios 3", requisitos: ["PI2102"] },
+
+      { nivel: 8, codigo: "ELECTIVO2", nombre: "Electivo 2", requisitos: [] },
+      { nivel: 8, codigo: "GI4101", nombre: "Evaluación Financiera de Proyectos", requisitos: ["GI3101"] },
+      { nivel: 8, codigo: "PR4101", nombre: "Proyecto Preprofesional", requisitos: [] },
+
+      { nivel: 9, codigo: "ELECTIVO3", nombre: "Electivo 3", requisitos: [] },
+      { nivel: 9, codigo: "ELECTIVO4", nombre: "Electivo 4", requisitos: [] },
+      { nivel: 9, codigo: "GI5101", nombre: "Estrategia y Organizaciones", requisitos: ["GI4101"] },
+      { nivel: 9, codigo: "HH5101", nombre: "Ética y Tecnología", requisitos: [] },
+      { nivel: 9, codigo: "IN5007", nombre: "Ciencia de la Decisión y Dinámica de Sistemas", requisitos: ["IN3011"] },
+      { nivel: 9, codigo: "IN5107", nombre: "Proyecto Final de Ingeniería Industrial I", requisitos: [] },
+
+      { nivel: 10, codigo: "ELECTIVO5", nombre: "Electivo 5", requisitos: [] },
+      { nivel: 10, codigo: "ELECTIVO6", nombre: "Electivo 6", requisitos: [] },
+      { nivel: 10, codigo: "IN5008", nombre: "Comportamiento Organizacional", requisitos: ["IN3012"] },
+      { nivel: 10, codigo: "IN5009", nombre: "Estrategia de Operaciones", requisitos: ["IN3008"] },
+      { nivel: 10, codigo: "IN5011", nombre: "Proyecto Final de Ingeniería Industrial II", requisitos: ["IN5107"] }
     ];
 
     const estadoCursos = JSON.parse(localStorage.getItem('estadoCursos') || '{}');
@@ -109,16 +154,14 @@
       div.appendChild(tooltip);
 
       function actualizarEstado() {
-        const aprobados = Object.keys(estadoCursos).filter(k => estadoCursos[k]);
         const faltan = curso.requisitos.filter(r => !estadoCursos[r]);
+        div.classList.remove('aprobado', 'bloqueado');
         if (estadoCursos[curso.codigo]) {
           div.classList.add('aprobado');
         } else if (faltan.length) {
           div.classList.add('bloqueado');
-          tooltip.textContent = 'Requiere:
-' + faltan.join('\n');
+          tooltip.textContent = 'Requiere:\n' + faltan.join('\n');
         } else {
-          div.classList.remove('bloqueado');
           tooltip.textContent = '';
         }
       }
@@ -141,7 +184,7 @@
       for (const nivel of niveles) {
         const divNivel = document.createElement('div');
         divNivel.className = 'nivel';
-        divNivel.innerHTML = `<h2>Nivel ${nivel}</h2>`;
+        divNivel.innerHTML = `<h2>Ciclo ${nivel}</h2>`;
         const grid = document.createElement('div');
         grid.className = 'grid';
         for (const curso of cursos.filter(c => c.nivel === nivel)) {
