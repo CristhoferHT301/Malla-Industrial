@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Curricular Interactiva</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 1rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .nivel {
+      margin-bottom: 2rem;
+    }
+    .nivel h2 {
+      background-color: #a0c4ff;
+      padding: 0.5rem;
+      border-radius: 8px;
+      color: #003566;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .curso {
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      background-color: #fff;
+      position: relative;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+    .curso.bloqueado {
+      background-color: #eee;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+    .curso.aprobado {
+      background-color: #d0f4de;
+      border-color: #63c48f;
+    }
+    .tooltip {
+      visibility: hidden;
+      background-color: #222;
+      color: #fff;
+      padding: 0.5rem;
+      border-radius: 4px;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      white-space: pre-wrap;
+      z-index: 1;
+    }
+    .curso:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Curricular - Ingeniería Industrial</h1>
+  <div id="contenedor"></div>
+
+  <script>
+    const cursos = [
+      { nivel: 1, codigo: "CC1101", nombre: "Cálculo de una variable", requisitos: [] },
+      { nivel: 1, codigo: "CC1141", nombre: "Química General", requisitos: [] },
+      { nivel: 1, codigo: "CC1142", nombre: "Laboratorio de Química General", requisitos: [] },
+      { nivel: 1, codigo: "CS1111", nombre: "Programación I", requisitos: [] },
+      { nivel: 1, codigo: "HH1101", nombre: "Laboratorio de Comunicación 1", requisitos: [] },
+      { nivel: 1, codigo: "IN1001", nombre: "Introducción a la Ingeniería Industrial", requisitos: [] },
+      { nivel: 1, codigo: "PI1101", nombre: "Proyectos Interdisciplinarios 1", requisitos: [] },
+      { nivel: 2, codigo: "CC1104", nombre: "Cálculo Vectorial", requisitos: ["CC1101"] },
+      { nivel: 2, codigo: "CC1105", nombre: "Estadística y Probabilidades I", requisitos: ["CC1101", "CS1111"] },
+      { nivel: 2, codigo: "CC1121", nombre: "Introducción a la Mecánica", requisitos: ["CC1101"] },
+      { nivel: 2, codigo: "CC1143", nombre: "Ciencia de los Materiales", requisitos: ["CC1141"] },
+      { nivel: 2, codigo: "HH1102", nombre: "Laboratorio de Comunicación 2", requisitos: ["HH1101"] },
+      { nivel: 2, codigo: "HH2101", nombre: "Perú: Temas de la sociedad contemporánea", requisitos: [] },
+      { nivel: 3, codigo: "CC1103", nombre: "Álgebra Lineal", requisitos: ["CC1101"] },
+      { nivel: 3, codigo: "CC2101", nombre: "Ecuaciones Diferenciales", requisitos: ["CC1104"] },
+      { nivel: 3, codigo: "CS1112", nombre: "Programación II", requisitos: ["CS1111"] },
+      { nivel: 3, codigo: "GI2101", nombre: "Empresa y Consumidor", requisitos: [] },
+      { nivel: 3, codigo: "IN2005", nombre: "Estadística Aplicada", requisitos: ["CC1104", "CC1105"] },
+      { nivel: 3, codigo: "IN2006", nombre: "Fundamentos de Operaciones", requisitos: ["CC1105"] },
+      // Agrega más cursos aquí siguiendo el formato
+    ];
+
+    const estadoCursos = JSON.parse(localStorage.getItem('estadoCursos') || '{}');
+
+    function crearCurso(curso) {
+      const div = document.createElement('div');
+      div.className = 'curso';
+      div.textContent = `${curso.codigo}: ${curso.nombre}`;
+      div.dataset.codigo = curso.codigo;
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      div.appendChild(tooltip);
+
+      function actualizarEstado() {
+        const aprobados = Object.keys(estadoCursos).filter(k => estadoCursos[k]);
+        const faltan = curso.requisitos.filter(r => !estadoCursos[r]);
+        if (estadoCursos[curso.codigo]) {
+          div.classList.add('aprobado');
+        } else if (faltan.length) {
+          div.classList.add('bloqueado');
+          tooltip.textContent = 'Requiere:
+' + faltan.join('\n');
+        } else {
+          div.classList.remove('bloqueado');
+          tooltip.textContent = '';
+        }
+      }
+
+      div.addEventListener('click', () => {
+        if (div.classList.contains('bloqueado')) return;
+        estadoCursos[curso.codigo] = !estadoCursos[curso.codigo];
+        localStorage.setItem('estadoCursos', JSON.stringify(estadoCursos));
+        render();
+      });
+
+      actualizarEstado();
+      return div;
+    }
+
+    function render() {
+      const contenedor = document.getElementById('contenedor');
+      contenedor.innerHTML = '';
+      const niveles = [...new Set(cursos.map(c => c.nivel))].sort((a, b) => a - b);
+      for (const nivel of niveles) {
+        const divNivel = document.createElement('div');
+        divNivel.className = 'nivel';
+        divNivel.innerHTML = `<h2>Nivel ${nivel}</h2>`;
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        for (const curso of cursos.filter(c => c.nivel === nivel)) {
+          grid.appendChild(crearCurso(curso));
+        }
+        divNivel.appendChild(grid);
+        contenedor.appendChild(divNivel);
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
